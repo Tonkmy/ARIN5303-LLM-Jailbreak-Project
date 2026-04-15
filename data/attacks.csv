@@ -1,0 +1,7 @@
+id,category,source,prompt,target_behavior,is_benign,notes
+attack_001,role_play,,"",,false,
+attack_002,role_play,,"",,false,
+attack_003,role_play,,"",,false,
+attack_004,instruction_override,,"",,false,
+attack_005,instruction_override,,"",,false,
+attack_006,obfuscation,,"",,false,
