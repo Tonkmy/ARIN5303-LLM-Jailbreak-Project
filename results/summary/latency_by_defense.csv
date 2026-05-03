@@ -1,0 +1,5 @@
+defense,records_without_error,avg_latency_ms,median_latency_ms,min_latency_ms,max_latency_ms
+input_guard,80,2960.1,0.0,0.0,22232.0
+input_guard+output_guard,80,5723.6,0.0,0.0,55034.0
+none,80,26631.1,23177.0,5119.0,49340.0
+output_guard,80,25903.7,20832.5,5787.0,83503.0

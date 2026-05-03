@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="540" viewBox="0 0 980 540">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="490.0" y="32" text-anchor="middle" font-family="Arial" font-size="22" font-weight="700" fill="#1f2933">ASR by Attack Category</text>
+<line x1="90" y1="440.0" x2="820" y2="440.0" stroke="#e5e7eb"/>
+<text x="78" y="444.0" text-anchor="end" font-family="Arial" font-size="12" fill="#4b5563">0.00</text>
+<line x1="90" y1="366.0" x2="820" y2="366.0" stroke="#e5e7eb"/>
+<text x="78" y="370.0" text-anchor="end" font-family="Arial" font-size="12" fill="#4b5563">0.10</text>
+<line x1="90" y1="292.0" x2="820" y2="292.0" stroke="#e5e7eb"/>
+<text x="78" y="296.0" text-anchor="end" font-family="Arial" font-size="12" fill="#4b5563">0.20</text>
+<line x1="90" y1="218.0" x2="820" y2="218.0" stroke="#e5e7eb"/>
+<text x="78" y="222.0" text-anchor="end" font-family="Arial" font-size="12" fill="#4b5563">0.30</text>
+<line x1="90" y1="144.0" x2="820" y2="144.0" stroke="#e5e7eb"/>
+<text x="78" y="148.0" text-anchor="end" font-family="Arial" font-size="12" fill="#4b5563">0.40</text>
+<line x1="90" y1="70.0" x2="820" y2="70.0" stroke="#e5e7eb"/>
+<text x="78" y="74.0" text-anchor="end" font-family="Arial" font-size="12" fill="#4b5563">0.50</text>
+<line x1="90" y1="70" x2="90" y2="440" stroke="#111827" stroke-width="1.5"/>
+<line x1="90" y1="440" x2="820" y2="440" stroke="#111827" stroke-width="1.5"/>
+<text x="25" y="255.0" transform="rotate(-90 25 255.0)" text-anchor="middle" font-family="Arial" font-size="14" fill="#374151">ASR</text>
+<rect x="135.0" y="107.0" width="34" height="333.0" fill="#2f6f7e" rx="3"/>
+<text x="152.0" y="101.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.45</text>
+<rect x="177.0" y="218.0" width="34" height="222.0" fill="#a23e48" rx="3"/>
+<text x="194.0" y="212.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.30</text>
+<rect x="219.0" y="440.0" width="34" height="0.0" fill="#4f7cac" rx="3"/>
+<text x="236.0" y="434.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.00</text>
+<rect x="261.0" y="440.0" width="34" height="0.0" fill="#6b5b95" rx="3"/>
+<text x="278.0" y="434.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.00</text>
+<text x="213.0" y="468" text-anchor="middle" font-family="Arial" font-size="13" fill="#374151">role_play</text>
+<rect x="378.3" y="144.0" width="34" height="296.0" fill="#2f6f7e" rx="3"/>
+<text x="395.3" y="138.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.40</text>
+<rect x="420.3" y="144.0" width="34" height="296.0" fill="#a23e48" rx="3"/>
+<text x="437.3" y="138.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.40</text>
+<rect x="462.3" y="440.0" width="34" height="0.0" fill="#4f7cac" rx="3"/>
+<text x="479.3" y="434.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.00</text>
+<rect x="504.3" y="440.0" width="34" height="0.0" fill="#6b5b95" rx="3"/>
+<text x="521.3" y="434.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.00</text>
+<text x="456.3" y="468" text-anchor="middle" font-family="Arial" font-size="13" fill="#374151">instruction_override</text>
+<rect x="621.7" y="329.0" width="34" height="111.0" fill="#2f6f7e" rx="3"/>
+<text x="638.7" y="323.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.15</text>
+<rect x="663.7" y="292.0" width="34" height="148.0" fill="#a23e48" rx="3"/>
+<text x="680.7" y="286.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.20</text>
+<rect x="705.7" y="440.0" width="34" height="0.0" fill="#4f7cac" rx="3"/>
+<text x="722.7" y="434.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.00</text>
+<rect x="747.7" y="440.0" width="34" height="0.0" fill="#6b5b95" rx="3"/>
+<text x="764.7" y="434.0" text-anchor="middle" font-family="Arial" font-size="11" fill="#111827">0.00</text>
+<text x="699.7" y="468" text-anchor="middle" font-family="Arial" font-size="13" fill="#374151">obfuscation</text>
+<rect x="840" y="90" width="14" height="14" fill="#2f6f7e"/>
+<text x="862" y="102" font-family="Arial" font-size="13" fill="#374151">none</text>
+<rect x="840" y="114" width="14" height="14" fill="#a23e48"/>
+<text x="862" y="126" font-family="Arial" font-size="13" fill="#374151">output</text>
+<rect x="840" y="138" width="14" height="14" fill="#4f7cac"/>
+<text x="862" y="150" font-family="Arial" font-size="13" fill="#374151">input</text>
+<rect x="840" y="162" width="14" height="14" fill="#6b5b95"/>
+<text x="862" y="174" font-family="Arial" font-size="13" fill="#374151">layered</text>
+</svg>

@@ -1,6 +1,6 @@
 Agent.md
 .DS_Store
 configs/model_api.json
-results/
+docs/
 __pycache__/
 *.pyc
