@@ -229,12 +229,3 @@ python3 src/run_experiment.py --defense all --raw-dir results/raw_new
 python3 src/evaluate_results.py --raw-dir results/raw_new --summary-dir results/summary_new
 ```
 
-## 10. Git Hygiene
-
-Ignored local files:
-
-- `configs/model_api.json`
-- `docs/`
-- Python cache files
-
-Do not commit local credentials. If API settings need to be shared, create a redacted example config instead.
