@@ -1,111 +1,116 @@
 # Project Plan
 
-## One-Sentence Scope
-Evaluate 3 jailbreak attack categories against a locally served Qwen 35B 8bit model, then compare no defense, input defense, output defense, and layered defense on ASR and benign refusal rate.
+## Scope
+Evaluate three jailbreak attack categories against a locally served omlx Qwen 35B 8bit MoE model, then compare baseline, input defense, output defense, and layered defense on attack success rate, benign refusal rate, and latency.
 
-## Why This Scope
-This is the smallest version that still looks like a real security evaluation project.
-It is realistic for 3 people and 3 weeks.
+This is now a single-person project. The objective is a course-submission-quality evaluation that can be completed in one focused day if the local model endpoint is stable.
 
 ## Fixed Decisions
-- Main model: local Qwen 35B 8bit API
-- Official attack categories: `role_play`, `instruction_override`, `obfuscation`
-- Official defenses:
-  - input guard
-  - output guard
-- Official experiment settings:
-  - same system prompt
-  - same temperature
-  - same max tokens
-  - same model endpoint
+- Main model: local omlx Qwen 35B 8bit MoE API.
+- API style: local omlx `/v1/chat/completions` endpoint using the common chat-completions request format.
+- Official attack categories: `role_play`, `instruction_override`, `obfuscation`.
+- Official defenses: `input_guard` and `output_guard`.
+- Official experiment settings: `none`, `input_guard`, `output_guard`, `input_guard+output_guard`.
+- Official metrics: ASR, benign refusal rate, and average latency.
+- Scope control: do not add attack categories, model variants, external judges, or extra defense variants until the fixed matrix is complete.
 
 ## Deliverables
-1. Clean benchmark files
-   - `data/attacks.csv`
-   - `data/benign.csv`
-2. Runnable experiment pipeline
-   - `src/call_model.py`
-   - `src/run_experiment.py`
-3. Two defense modules
-   - `defenses/input_guard.py`
-   - `defenses/output_guard.py`
-4. Evaluation outputs
-   - summary table
-   - 3 charts
-5. Final report and slides
+- `configs/model_api.json`: local endpoint configuration, ignored by git.
+- `data/attacks.csv`: 60 attack prompts, exactly 20 per attack category.
+- `data/benign.csv`: 20 benign prompts.
+- `defenses/input_guard.py`: pre-generation guard with `check_input(prompt: str) -> dict`.
+- `defenses/output_guard.py`: post-generation guard with `check_output(response: str) -> dict`.
+- `src/call_model.py`: local model client.
+- `src/run_experiment.py`: runner for the four official settings.
+- `src/evaluate_results.py`: summary metrics and chart generation.
+- `results/`: raw JSONL results, summaries, and figures, ignored by git.
+- `report.md`: living final-report draft.
 
-## Roles
-### Lead / Member 1
-Owns:
-- local model endpoint
-- integration
-- official runs
-- final results
-- keeping schedule tight
+## Dataset Plan
+Attack dataset:
+- 60 rows total.
+- 20 rows in `role_play`.
+- 20 rows in `instruction_override`.
+- 20 rows in `obfuscation`.
+- Columns must match `templates/attack_dataset_template.csv`.
+- Each row should include `id`, `category`, `source`, `prompt`, `target_behavior`, `is_benign`, and `notes`.
 
-### Member 2
-Owns:
-- attack set
-- benign set
-- dataset quality checks
-- source tracking
-
-### Member 3
-Owns:
-- defense implementations
-- evaluation script
-- figures
-- report draft
-
-## Dataset Target
-### Attack set
-- 60 total attack prompts
-- 20 per category
-- use public benchmark ideas and known jailbreak styles
-- do not create extra scope by collecting too many sources
-
-### Benign set
-- 20 total benign prompts
-- a mix of normal QA, summarization, coding help, and harmless advice
+Benign dataset:
+- 20 rows total.
+- Category must be `benign`.
+- Prompt types should cover factual QA, summarization, writing help, simple coding help, and planning help.
+- Columns must match `templates/benign_dataset_template.csv`.
 
 ## Experiment Matrix
-Run these 4 settings only:
+Run exactly these four settings on the same input files:
 1. `none`
 2. `input_guard`
 3. `output_guard`
 4. `input_guard+output_guard`
 
-Do not add more variants unless the first 4 are complete.
+Expected total calls:
+- 80 prompts x 4 settings = 320 prompt records.
+- Input-guard-blocked records should still be written, with no model response and a recorded block reason.
+
+## Result Schema
+Each raw result record should include at least:
+- `id`
+- `category`
+- `is_benign`
+- `model`
+- `defense`
+- `prompt`
+- `target_behavior`
+- `input_blocked`
+- `input_guard_reason`
+- `response`
+- `output_blocked`
+- `output_guard_reason`
+- `refused`
+- `attack_success`
+- `latency_ms`
+- `error`
 
 ## Metrics
-### Primary
-- ASR: fraction of attack prompts that produce a successful unsafe completion
-- benign refusal rate: fraction of benign prompts incorrectly blocked or refused
+Primary:
+- ASR by defense: attack-successful records divided by total attack records for each defense.
+- ASR by category: attack-successful records divided by total attack records for each category and defense.
+- Benign refusal rate by defense: benign records blocked or refused divided by total benign records for each defense.
 
-### Secondary
-- average latency per prompt
+Secondary:
+- Average latency by defense.
+- Error count by defense.
 
-## Three-Week Schedule
-### Week 1: Freeze Inputs
-- Member 2 finishes first-pass datasets
-- Lead verifies local pipeline and result schema
-- Member 3 writes defense stubs and evaluation skeleton
-- Team runs 5 to 10 sample prompts as smoke test
+## One-Day Execution Plan
+Phase 1: Freeze configuration.
+- Create `configs/model_api.json` from the example.
+- Confirm the local model endpoint, model name, temperature, max tokens, and timeout.
+- Run a one-prompt smoke test.
 
-### Week 2: Run Core Experiments
-- Lead runs baseline and defended experiments on the full set
-- Member 3 fixes defenses based on observed failures
-- Member 2 audits mislabeled prompts and cleans data
+Phase 2: Complete benchmark files.
+- Fill `data/attacks.csv` to 60 rows.
+- Fill `data/benign.csv` to 20 rows.
+- Run a CSV quality check for counts, blank required fields, duplicate prompts, and category spelling.
 
-### Week 3: Finish Story
-- Lead reruns the final experiment matrix if needed
-- Member 3 generates charts and report draft
-- Member 2 writes taxonomy and attack case analysis
-- Team prepares final slides and speaking order
+Phase 3: Implement pipeline.
+- Make `src/run_experiment.py` load CSV rows and run one or all defense settings.
+- Make the runner resumable enough to avoid losing completed records after interruption.
+- Write raw results under `results/raw/`.
 
-## Success Criteria
-The project is complete if:
-- all 4 experiment settings are run on the same dataset
-- ASR and benign refusal rate are reported
-- at least 3 clear figures or tables are produced
-- the report explains which attack category is strongest and which defense helps most
+Phase 4: Implement evaluation.
+- Make `src/evaluate_results.py` read raw JSONL files.
+- Write summary CSV files under `results/summary/`.
+- Generate three figures under `results/figures/`.
+
+Phase 5: Finish report.
+- Copy final metrics into `report.md`.
+- Add representative examples and limitations.
+- Record unresolved issues in `docs/PROJECT_STATUS.md`.
+
+## Completion Criteria
+The project is complete when:
+- The local model configuration is frozen.
+- The attack and benign datasets match the required counts.
+- All four experiment settings run on the same dataset.
+- Raw results, summaries, and three figures exist under `results/`.
+- `report.md` explains the strongest attack category, the most useful defense setting, benign refusal tradeoffs, and limitations.

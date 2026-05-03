@@ -1,44 +1,80 @@
-"""Minimal local API caller scaffold.
-
-The project lead should adapt this file to the exact local API settings.
-"""
-
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, List
-
-try:
-    from openai import OpenAI
-except ImportError:  # pragma: no cover
-    OpenAI = None
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 
-def load_config(path: str = "configs/model_api.json") -> Dict[str, Any]:
+def load_config(path: str = "configs/model_api.json") -> dict:
+    """Read the local model config.
+
+    The real config is ignored by git because it contains the local API key.
+    """
     config_path = Path(path)
     if not config_path.exists():
-        config_path = Path("configs/model_api.example.json")
+        raise FileNotFoundError(f"Missing config file: {config_path}")
     return json.loads(config_path.read_text())
 
 
-def build_messages(user_prompt: str, system_prompt: str) -> List[Dict[str, str]]:
+def build_messages(prompt: str, system_prompt: str) -> list[dict[str, str]]:
+    """Keep the prompt template in one obvious place."""
     return [
         {"role": "system", "content": system_prompt},
-        {"role": "user", "content": user_prompt},
+        {"role": "user", "content": prompt},
     ]
 
 
-def call_model(user_prompt: str) -> str:
-    cfg = load_config()
-    if OpenAI is None:
-        raise RuntimeError("Install the openai package before using call_model.py")
+def call_model(
+    prompt: str,
+    config_path: str = "configs/model_api.json",
+    max_tokens: int | None = None,
+) -> str:
+    """Send one prompt to the local omlx chat-completions endpoint."""
+    cfg = load_config(config_path)
 
-    client = OpenAI(base_url=cfg["base_url"], api_key=cfg["api_key"])
-    response = client.chat.completions.create(
-        model=cfg["model"],
-        messages=build_messages(user_prompt, cfg["system_prompt"]),
-        temperature=cfg["temperature"],
-        max_tokens=cfg["max_tokens"],
+    # This is a plain HTTP request to the local omlx server, not an OpenAI SDK call.
+    endpoint = cfg["base_url"].rstrip("/") + "/chat/completions"
+    payload = {
+        "model": cfg["model"],
+        "messages": build_messages(prompt, cfg["system_prompt"]),
+        "temperature": cfg["temperature"],
+        "max_tokens": max_tokens or cfg["max_tokens"],
+    }
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {cfg['api_key']}",
+    }
+
+    request = Request(
+        endpoint,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+        method="POST",
     )
-    return response.choices[0].message.content or ""
+
+    try:
+        with urlopen(request, timeout=cfg["timeout_seconds"]) as response:
+            data = json.loads(response.read().decode("utf-8"))
+    except HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Model API returned HTTP {exc.code}: {body}") from exc
+    except URLError as exc:
+        raise RuntimeError(f"Could not reach model API at {endpoint}: {exc}") from exc
+
+    return data["choices"][0]["message"].get("content", "")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--prompt", default="Reply with a short smoke-test confirmation.")
+    parser.add_argument("--config", default="configs/model_api.json")
+    parser.add_argument("--max-tokens", type=int)
+    args = parser.parse_args()
+
+    print(call_model(args.prompt, args.config, args.max_tokens).strip())
+
+
+if __name__ == "__main__":
+    main()
