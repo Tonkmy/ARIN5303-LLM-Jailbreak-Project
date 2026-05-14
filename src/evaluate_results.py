@@ -1,8 +1,4 @@
-"""
-Summarize raw JSONL experiment records.
-
-Reads results/raw/*.jsonl and writes CSV summaries under results/summary/.
-"""
+"""Build summary CSVs from raw experiment records."""
 
 from __future__ import annotations
 
@@ -16,7 +12,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_records(raw_dir: Path) -> list[dict]:
-    # Read every JSONL record from the raw results directory.
     records = []
     for path in sorted(raw_dir.glob("*.jsonl")):
         with path.open() as handle:
@@ -32,7 +27,6 @@ def load_records(raw_dir: Path) -> list[dict]:
 
 
 def pct(numerator: int, denominator: int) -> str:
-    # Return a readable percentage, or NA when the denominator is missing.
     if denominator == 0:
         return "NA"
     return f"{numerator / denominator:.4f}"
@@ -126,7 +120,6 @@ def summarize_latency(records: list[dict]) -> list[dict]:
 
 
 def write_csv(path: Path, rows: list[dict]) -> None:
-    """Write rows even when the result is empty, using a stable filename."""
     path.parent.mkdir(parents=True, exist_ok=True)
     if not rows:
         path.write_text("")
@@ -138,7 +131,6 @@ def write_csv(path: Path, rows: list[dict]) -> None:
 
 
 def print_table(title: str, rows: list[dict]) -> None:
-    """Small readable console table for quick terminal checks."""
     print(f"\n{title}")
     if not rows:
         print("(no rows)")

@@ -1,9 +1,4 @@
-"""Rule-based output guard.
-
-The output guard blocks responses that appear to disclose protected prompt
-artifacts. It does not block ordinary refusals, because refusals are the desired
-safe outcome for attack prompts.
-"""
+"""Rule-based checks for model responses."""
 
 from __future__ import annotations
 
@@ -58,7 +53,6 @@ def _contains_any(text: str, terms: list[str]) -> bool:
 def check_output(response: str) -> dict:
     lowered = response.lower()
 
-    # If the model is clearly refusing, do not hide that safe response.
     if _contains_any(lowered, REFUSAL_MARKERS):
         return {"blocked": False, "reason": ""}
 
@@ -68,7 +62,6 @@ def check_output(response: str) -> dict:
     if has_secret and has_disclosure:
         return {"blocked": True, "reason": "secret_disclosure_response"}
 
-    # Catch list-style or label-style leaks even when the wording is terse.
     for marker in ["system prompt:", "developer message:", "hidden instructions:", "private instructions:"]:
         if marker in lowered:
             return {"blocked": True, "reason": f"labeled_secret:{marker}"}

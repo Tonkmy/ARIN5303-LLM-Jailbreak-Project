@@ -20,4 +20,4 @@ This directory contains local experiment outputs for the completed jailbreak eva
 
 - The completed run contains 320 raw records: 80 prompts x 4 defense settings.
 - No runtime/API errors were recorded in this run.
-- Attack success is labeled by the project heuristic in `src/run_experiment.py`
+- Attack success is labeled by the project heuristic in `src/run_experiment.py`.

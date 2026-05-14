@@ -8,7 +8,6 @@ from urllib.request import Request, urlopen
 
 
 def load_config(path: str = "configs/model_api.json") -> dict:
-    # Read the local model config.
     config_path = Path(path)
     if not config_path.exists():
         raise FileNotFoundError(f"Missing config file: {config_path}")
@@ -16,7 +15,6 @@ def load_config(path: str = "configs/model_api.json") -> dict:
 
 
 def build_messages(prompt: str, system_prompt: str) -> list[dict[str, str]]:
-    # Keep the prompt template in one obvious place.
     return [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": prompt},
@@ -28,10 +26,8 @@ def call_model(
     config_path: str = "configs/model_api.json",
     max_tokens: int | None = None,
 ) -> str:
-    # Send one prompt to the local omlx chat-completions endpoint.
     cfg = load_config(config_path)
 
-    # This is a plain HTTP request to the local omlx server, not an OpenAI SDK call.
     endpoint = cfg["base_url"].rstrip("/") + "/chat/completions"
     payload = {
         "model": cfg["model"],

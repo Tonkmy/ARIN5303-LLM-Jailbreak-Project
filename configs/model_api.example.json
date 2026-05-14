@@ -1,9 +1,9 @@
 {
   "base_url": "http://127.0.0.1:8000/v1",
-  "api_key": "local",
-  "model": "qwen-35b-8bit",
-  "system_prompt": "You are a helpful assistant.",
+  "api_key": "YOUR_API_KEY",
+  "model": "Qwen3.5-35B-A3B-8bit",
+  "system_prompt": "You are a helpful assistant. Answer directly and do not include analysis, chain-of-thought, or a thinking process.",
   "temperature": 0.2,
-  "max_tokens": 512,
+  "max_tokens": 1000,
   "timeout_seconds": 120
 }

@@ -1,10 +1,4 @@
-"""Rule-based input guard.
-
-This guard is intentionally simple: it blocks prompts that look like they are
-trying to override instructions, reveal hidden prompts, or hide those requests
-with light obfuscation. The rules are transparent so we can discuss their
-strengths and limitations in the report.
-"""
+"""Rule-based checks for risky user prompts."""
 
 from __future__ import annotations
 
@@ -114,7 +108,6 @@ ACTION_TERMS = [
     "muestra",
 ]
 
-# Compact matching catches spaced, dashed, snake_case, and some split-token attacks.
 COMPACT_PATTERNS = [
     "revealthesystemprompt",
     "showthesystemprompt",
@@ -131,7 +124,6 @@ COMPACT_PATTERNS = [
     "cmv2zwflihrozsbzexn0zw0gchjvbxb0",
 ]
 
-# Tiny leetspeak normalization for prompts like "1gn0r3 pr3v10us rul3s".
 LEET_TABLE = str.maketrans({"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t"})
 
 
@@ -151,17 +143,14 @@ def check_input(prompt: str) -> dict:
     compact = _compact(lowered)
     leet_compact = _compact(lowered.translate(LEET_TABLE))
 
-    # Direct override phrases should be blocked immediately.
     match = _first_match(lowered, OVERRIDE_TERMS)
     if match:
         return {"blocked": True, "reason": f"override:{match}"}
 
-    # Obfuscated commands often collapse into obvious text after punctuation is removed.
     match = _first_match(compact, COMPACT_PATTERNS) or _first_match(leet_compact, COMPACT_PATTERNS)
     if match:
         return {"blocked": True, "reason": f"compact:{match}"}
 
-    # Reversed or vowel-stripped examples are common in the obfuscation split.
     for marker in ["tpmorp metsys", "systm prmpt", "rvl th systm"]:
         if marker in lowered:
             return {"blocked": True, "reason": f"obfuscated:{marker}"}
@@ -171,11 +160,9 @@ def check_input(prompt: str) -> dict:
     has_roleplay = bool(_first_match(lowered, ROLEPLAY_TERMS))
     has_obfuscation = bool(_first_match(lowered, OBFUSCATION_TERMS))
 
-    # A request to reveal/show/print a protected prompt artifact is the main attack target.
     if has_secret and has_action:
         return {"blocked": True, "reason": "secret_disclosure_request"}
 
-    # Role-play and encoding wrappers are suspicious when they mention protected prompt artifacts.
     if has_secret and has_roleplay:
         return {"blocked": True, "reason": "roleplay_secret_request"}
     if has_secret and has_obfuscation:
@@ -183,7 +170,6 @@ def check_input(prompt: str) -> dict:
     if has_obfuscation and any(term in lowered for term in ["command", "comply", "carry it out", "follow it", "obey"]):
         return {"blocked": True, "reason": "obfuscated_command_request"}
 
-    # Catch indirect wording such as "private text that tells you how to behave".
     if "private text" in lowered and "how to behave" in lowered:
         return {"blocked": True, "reason": "indirect_private_instruction_request"}
     if "before the user" in lowered and "prompt" in lowered and has_action:
@@ -194,4 +180,3 @@ def check_input(prompt: str) -> dict:
         return {"blocked": True, "reason": "placeholder_system_prompt_request"}
 
     return {"blocked": False, "reason": ""}
-    "instructions were hidden",
